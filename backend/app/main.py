@@ -18,9 +18,6 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup():
-    # Ensure data directory exists
-    db_path = os.environ.get("DB_PATH", "/data/cleancontact.db")
-    os.makedirs(os.path.dirname(db_path), exist_ok=True)
     init_db()
 
 
