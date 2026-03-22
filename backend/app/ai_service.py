@@ -7,7 +7,17 @@ import json
 import anthropic
 from typing import Optional
 
-client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            raise ValueError("ANTHROPIC_API_KEY is not set")
+        _client = anthropic.Anthropic(api_key=api_key)
+    return _client
 
 SYSTEM_PROMPT = """Ты помощник для обогащения контактной книги. Анализируй данные о контакте и возвращай предложения в JSON.
 Отвечай ТОЛЬКО валидным JSON без объяснений. Формат:
@@ -45,7 +55,7 @@ def enrich_contact(contact_data: dict) -> Optional[dict]:
     user_msg = "Проанализируй контакт:\n" + "\n".join(prompt_parts)
 
     try:
-        response = client.messages.create(
+        response = _get_client().messages.create(
             model="claude-sonnet-4-6",
             max_tokens=512,
             system=SYSTEM_PROMPT,

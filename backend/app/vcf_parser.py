@@ -4,7 +4,7 @@ VCF/vCard parser — handles iPhone exports including Telegram via IMPP and X-SO
 import re
 import vobject
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 from .phone_utils import normalize_phone
 
 
@@ -82,7 +82,7 @@ def _get_text(vcard, field: str) -> Optional[str]:
         return None
 
 
-def parse_vcf(content: bytes) -> list[dict]:
+def parse_vcf(content: bytes) -> List[dict]:
     """Parse a .vcf file bytes and return list of contact dicts."""
     try:
         text = content.decode("utf-8")
