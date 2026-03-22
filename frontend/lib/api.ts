@@ -54,7 +54,7 @@ export async function fetchContacts(q?: string, circle?: string): Promise<Contac
   const params = new URLSearchParams();
   if (q) params.set("q", q);
   if (circle) params.set("circle", circle);
-  params.set("limit", "500");
+  params.set("limit", "5000");
   const res = await fetch(`${API_BASE}/contacts?${params}`);
   return res.json();
 }

@@ -16,7 +16,7 @@ def list_contacts(
     q: Optional[str] = Query(None),
     circle: Optional[str] = Query(None),
     skip: int = 0,
-    limit: int = 100,
+    limit: int = 5000,
     db: Session = Depends(get_db),
 ):
     query = db.query(Contact)

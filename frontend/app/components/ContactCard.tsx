@@ -16,10 +16,12 @@ import {
   Link,
   User,
   Briefcase,
+  Trash2,
 } from "lucide-react";
 import {
   Contact,
   updateContact,
+  deleteContact,
   enrichContact,
   confirmSuggestions,
 } from "../../lib/api";
@@ -27,6 +29,7 @@ import {
 interface Props {
   contact: Contact;
   onUpdate: (c: Contact) => void;
+  onDelete: (id: string) => void;
   onClose: () => void;
 }
 
@@ -38,10 +41,11 @@ const CIRCLE_OPTIONS = [
   { value: "unknown", label: "Неизвестно" },
 ];
 
-export default function ContactCard({ contact: initial, onUpdate, onClose }: Props) {
+export default function ContactCard({ contact: initial, onUpdate, onDelete, onClose }: Props) {
   const [contact, setContact] = useState<Contact>(initial);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [enriching, setEnriching] = useState(false);
   const [draft, setDraft] = useState<Partial<Contact>>({});
 
@@ -74,6 +78,19 @@ export default function ContactCard({ contact: initial, onUpdate, onClose }: Pro
 
   function field<K extends keyof Contact>(key: K, value: Contact[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
+  }
+
+  async function handleDelete() {
+    const name = contact.raw_name || `${contact.first_name || ""} ${contact.last_name || ""}`.trim() || "контакт";
+    if (!confirm(`Удалить «${name}»?`)) return;
+    setDeleting(true);
+    try {
+      await deleteContact(contact.id);
+      onDelete(contact.id);
+      onClose();
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function handleEnrich() {
@@ -188,6 +205,14 @@ export default function ContactCard({ contact: initial, onUpdate, onClose }: Pro
                 className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors"
               >
                 Редактировать
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+                title="Удалить контакт"
+              >
+                <Trash2 size={16} />
               </button>
             </>
           ) : (

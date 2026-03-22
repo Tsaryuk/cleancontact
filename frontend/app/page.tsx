@@ -256,6 +256,10 @@ export default function Home() {
                 prev.map((c) => (c.id === updated.id ? updated : c))
               );
             }}
+            onDelete={(id) => {
+              setSelected(null);
+              setContacts((prev) => prev.filter((c) => c.id !== id));
+            }}
             onClose={() => setSelected(null)}
           />
         ) : (
